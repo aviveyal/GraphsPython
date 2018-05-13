@@ -162,30 +162,8 @@ def failReasonNoNeed(siteName ,includeNoneed):
 
     fail =0
     cancel =0
-    postponed =0
     done=0
-    precipitation=0
-    wind=0
-    lowBattery=0
-    gpsLoss=0
-    gpsBlock=0
-    els=0
-    systemMal=0
-    fog=0
-    siteTeam=0
-    client=0
-    noNeed=0
-    systemFailure=0
-    external=0
-    corporate=0
-    other=0
-    siteTeamC=0
-    clientC=0
-    noNeedC=0
-    systemFailureC=0
-    externalC=0
-    corporateC=0
-    otherC =0
+
     for row in range(2, maxRow):
         if(sheet1['C' +str(row)].value==siteName or siteName=="All sites"):
             if((sheet1['E' + str(row)].value == "No Need" and includeNoneed == True) or (sheet1['E' + str(row)].value != "No Need") ):
@@ -193,60 +171,13 @@ def failReasonNoNeed(siteName ,includeNoneed):
                     done+=1
                 elif(sheet1['B' +str(row)].value=="Fail"):
                     fail+=1
-                    if (sheet1['F' + str(row)].value == "Precipitation"):
-                        precipitation += 1
-                    elif (sheet1['F' + str(row)].value == "Wind"):
-                        wind += 1
-                    elif (sheet1['F' + str(row)].value == "Low battery power"):
-                        lowBattery += 1
-                    elif (sheet1['F' + str(row)].value == "GPS loss"):
-                        gpsLoss += 1
-                    elif (sheet1['F' + str(row)].value == "GPS block"):
-                        gpsBlock += 1
-                    elif (sheet1['F' + str(row)].value == "ELS landing"):
-                        els += 1
-                    elif (sheet1['F' + str(row)].value == "System malfunction "):
-                        systemMal += 1
-                    elif (sheet1['F' + str(row)].value == "Fog"):
-                        fog += 1
                 elif(sheet1['B' +str(row)].value=="Cancelled"):
                     cancel+=1
-                    if (sheet1['E' + str(row)].value == "Site Team Error"):
-                        siteTeamC += 1
-                    elif (sheet1['E' + str(row)].value == "Client Retaliated Reason"):
-                        clientC += 1
-                    elif (sheet1['E' + str(row)].value == "No Need"):
-                        noNeedC += 1
-                    elif (sheet1['E' + str(row)].value == "System Failure"):
-                        systemFailureC += 1
-                    elif (sheet1['E' + str(row)].value == "External Reason"):
-                        externalC += 1
-                    elif (sheet1['E' + str(row)].value == "Corporate Support"):
-                        corporateC += 1
-                    elif (sheet1['E' + str(row)].value == "Other"):
-                        otherC += 1
-                elif(sheet1['B' +str(row)].value=="Postponed"):
-                    postponed+=1
-                    if (sheet1['E' + str(row)].value == "Site Team Error"):
-                        siteTeam += 1
-                    elif (sheet1['E' + str(row)].value == "Client Retaliated Reason"):
-                        client += 1
-                    elif (sheet1['E' + str(row)].value == "No Need"):
-                        noNeed += 1
-                    elif (sheet1['E' + str(row)].value == "System Failure"):
-                        systemFailure += 1
-                    elif (sheet1['E' + str(row)].value == "External Reason"):
-                        external += 1
-                    elif (sheet1['E' + str(row)].value == "Corporate Support"):
-                        corporate += 1
-                    elif (sheet1['E' + str(row)].value == "Other"):
-                        other += 1
 
 
     print(siteName)
     print("fail- " ,fail)
     print("cancel- ",cancel)
-    print("postponed- ",postponed)
     print("done- ", done)
     print("\n")
 
@@ -256,46 +187,12 @@ def failReasonNoNeed(siteName ,includeNoneed):
         ws2 = wb.create_sheet(title=siteName)
 
     data = [
-        ['fail reason', 'Count'],
+        ['Status', 'Count'],
         ['fail', int(fail)],
         ['cancel', int(cancel)],
-        ['postponed', int(postponed)],
         ['success', int(done)],
     ]
 
-    dataFail = [
-        ['fail reason', 'Count'],
-        ['Precipitation', int(precipitation)],
-        ['wind', int(wind)],
-        ['Low battery power', int(lowBattery)],
-        ['GPS loss', int(gpsLoss)],
-        ['GPS block', int(gpsBlock)],
-        ['ELS landing', int(els)],
-        ['System malfunction', int(systemMal)],
-        ['Fog', int(fog)],
-
-    ]
-
-    dataPostponed = [
-        ['postponed reason', 'Count'],
-        ['Site Team Error', int(siteTeam)],
-        ['Client Retaliated Reason', int(client)],
-        ['No Need', int(noNeed)],
-        ['System Failure', int(systemFailure)],
-        ['External Reason', int(external)],
-        ['Corporate Support', int(corporate)],
-        ['Other', int(other)],
-    ]
-    dataCancelled = [
-        ['cancel reason', 'Count'],
-        ['Site Team Error', int(siteTeamC)],
-        ['Client Retaliated Reason', int(clientC)],
-        ['No Need', int(noNeedC)],
-        ['System Failure', int(systemFailureC)],
-        ['External Reason', int(externalC)],
-        ['Corporate Support', int(corporateC)],
-        ['Other', int(otherC)],
-    ]
 
     #total data
 
@@ -303,8 +200,8 @@ def failReasonNoNeed(siteName ,includeNoneed):
         ws2.append(row)
 
     pie = PieChart()
-    labels = Reference(ws2, min_col=1, min_row=2, max_row=5)
-    data = Reference(ws2, min_col=2, min_row=1, max_row=5)
+    labels = Reference(ws2, min_col=1, min_row=2, max_row=4)
+    data = Reference(ws2, min_col=2, min_row=1, max_row=4)
     pie.add_data(data, titles_from_data=True)
     pie.set_categories(labels)
 
@@ -317,51 +214,6 @@ def failReasonNoNeed(siteName ,includeNoneed):
 
     ws2.add_chart(pie, "D3")
 
-    #fail data
-
-    for row in dataFail:
-        ws2.append(row)
-
-    pie2 = PieChart()
-    labels = Reference(ws2, min_col=1, min_row=7, max_row=14)
-    data = Reference(ws2, min_col=2, min_row=6, max_row=14)
-    pie2.add_data(data, titles_from_data=True)
-    pie2.set_categories(labels)
-    pie2.title = "Fail reason"
-    pie2.dataLabels = DataLabelList()
-    pie2.dataLabels.showVal = True
-
-    ws2.add_chart(pie2, "D19")
-
-    #postponed reason
-    for row in dataPostponed:
-        ws2.append(row)
-
-    pie3 = PieChart()
-    labels = Reference(ws2, min_col=1, min_row=16, max_row=22)
-    data = Reference(ws2, min_col=2, min_row=15, max_row=22)
-    pie3.add_data(data, titles_from_data=True)
-    pie3.set_categories(labels)
-    pie3.title = "Postponed reason"
-    pie3.dataLabels = DataLabelList()
-    pie3.dataLabels.showVal = True
-
-    ws2.add_chart(pie3, "D35")
-
-    #Cancel reason
-    for row in dataCancelled:
-        ws2.append(row)
-
-    pie4 = PieChart()
-    labels = Reference(ws2, min_col=1, min_row=24, max_row=30)
-    data = Reference(ws2, min_col=2, min_row=23, max_row=30)
-    pie4.add_data(data, titles_from_data=True)
-    pie4.set_categories(labels)
-    pie4.title = "Cancel reason"
-    pie4.dataLabels = DataLabelList()
-    pie4.dataLabels.showVal = True
-
-    ws2.add_chart(pie4, "D51")
 
     wb.save('SiteStatusProject.xlsx')
 
@@ -369,8 +221,8 @@ def failReasonNoNeed(siteName ,includeNoneed):
 
 list = ["All sites","Haifa Bay Port" ,"FAB 28","S32 Mine","S32 Worsley alumina" ,"BHP Area C" ,"Minera Centinela","BHP San Manuel","Vale NC1"]
 for siteName in list:
-    function(siteName, True)
-    failReasonNoNeed(siteName, True)
+    # function(siteName, True)
+    # failReasonNoNeed(siteName, True)
     function(siteName, False)
     failReasonNoNeed(siteName, False)
 
