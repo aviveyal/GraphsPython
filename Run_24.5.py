@@ -220,7 +220,7 @@ def failReason(siteName):
         ['fail reason', 'Count'],
         ['Weather', int(failWeather)],
         ['Human error', int(failHuman)],
-        ['System related', int(failSystem)],
+        ['System related' , int(failSystem)],
 
     ]
 
