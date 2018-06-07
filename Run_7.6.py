@@ -1,5 +1,6 @@
 from openpyxl import Workbook
-from datetime import datetime
+from datetime import datetime , timedelta
+import time
 from collections import OrderedDict
 from openpyxl import load_workbook
 from openpyxl.chart.label import DataLabelList
@@ -13,28 +14,39 @@ from openpyxl.chart import (
     ProjectedPieChart,
     Reference
 )
-
+print("Set the planned KPI date (Monday Date)")
+year = int(input('Enter a year : '))
+month = int(input('Enter a month : '))
+day = int(input('Enter a day : '))
+MondayDate = datetime(year, month, day,00 ,00 ,00)
+print(MondayDate)
 
 def function (siteName):
+    global MondayDate
+    print("CHECKINGIGIGINGING " +MondayDate.strftime("%d/%m/%y"))
     wb = load_workbook(filename = 'SiteStatusProject.xlsx')
     sheet1 = wb['SiteStatusProject']
-
+   #print(MondayDate.strftime('%d/%m'))
     #iterate over data-
 
     maxRow = sheet1.max_row + 1
     total =0
+    plannedKPI =0
     done =0
 
     for row in range(2, maxRow):
         if(sheet1['C' +str(row)].value==siteName or siteName=="All sites"):
                 total+=1
+                if(time.strptime(sheet1['G' + str(row)].value.strftime("%d/%m/%y"), "%d/%m/%y")  <= time.strptime(MondayDate.strftime("%d/%m/%y"),"%d/%m/%y" )):
+                    plannedKPI+=1
                 if(sheet1['B' +str(row)].value=="Done"):
                     done += 1
 
 
     rows = [
         ('Status', 'Amount'),
-        ("Planned", total),
+        ("Planned KPI", plannedKPI),
+        ("Planned overview", total),
         ("Actual", done),
     ]
 
@@ -60,7 +72,7 @@ def function (siteName):
     chart1.y_axis.title = "Flight number"
     chart1.x_axis.title = "Total"
     data = Reference(ws2, min_col=2, min_row=1, max_row=ws2.max_row, max_col=ws2.max_column)
-    cats = Reference(ws2, min_col=1, min_row=2, max_row=3)
+    cats = Reference(ws2, min_col=1, min_row=2, max_row=4)
     chart1.add_data(data, titles_from_data=True)
     chart1.set_categories(cats)
     chart1.dataLabels = DataLabelList()
@@ -69,12 +81,14 @@ def function (siteName):
 
 
 
-    ws2.add_chart(chart1, "E2")
+    ws2.add_chart(chart1, "F2")
     wb.save('SiteStatusProject.xlsx')
 
     maxRow = sheet1.max_row + 1
     total = 0
+    plannedKPI = 0
     done = 0
+
     dict= {}
     rows =[]
     for row in range(2, maxRow):
@@ -85,6 +99,11 @@ def function (siteName):
                         total += 1
                         dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['total'] = total
                         dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['done'] = done
+                        dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['PlannedKPI'] = plannedKPI
+                        if (time.strptime(sheet1['G' + str(row)].value.strftime("%d/%m/%y"),
+                                          "%d/%m/%y") <= time.strptime(MondayDate.strftime("%d/%m/%y"), "%d/%m/%y")):
+                            plannedKPI += 1
+                            dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['PlannedKPI'] = plannedKPI
                         if (sheet1['B' + str(row)].value == "Done"):
                             done += 1
                             dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['done'] = done
@@ -92,13 +111,19 @@ def function (siteName):
                         dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['total'] += 1
                         if (sheet1['B' + str(row)].value == "Done"):
                             dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['done'] += 1
+                            if (time.strptime(sheet1['G' + str(row)].value.strftime("%d/%m/%y"),
+                                              "%d/%m/%y") <= time.strptime(MondayDate.strftime("%d/%m/%y"),
+                                                                           "%d/%m/%y")):
+                               dict[sheet1['D' + str(row)].value.strftime('%d/%m')]['PlannedKPI'] += 1
         total = 0
         done = 0
+        plannedKPI = 0
 
     #inset into rows
     row=[]
     row.append("date")
-    row.append("Planned")
+    row.append("Planned KPI")
+    row.append("Planned overview")
     row.append("Actual")
     rows.append(row)
 
@@ -112,9 +137,13 @@ def function (siteName):
     print("DATA")
     #print(ordered_data)
 
+
+
+
     for data in ordered_data:
             row=[]
             row.append(data[0])
+            row.append(data[1]['PlannedKPI'])
             row.append(data[1]['total'])
             row.append(data[1]['done'])
             rows.append(row)
@@ -126,7 +155,7 @@ def function (siteName):
     for row in rows:
         ws2.append(row)
 
-    data = Reference(ws2, min_col=2, min_row=4, max_col=3, max_row=ws2.max_row+1)
+    data = Reference(ws2, min_col=2, min_row=5, max_col=4, max_row=ws2.max_row+1)
 
     # Chart with date axis
     c2 = LineChart()
@@ -143,15 +172,16 @@ def function (siteName):
     c2.dataLabels = DataLabelList()
     c2.dataLabels.showVal = True
     c2.add_data(data, titles_from_data=True)
-    dates = Reference(ws2, min_col=1, min_row=5, max_row=ws2.max_row+1)
+    dates = Reference(ws2, min_col=1, min_row=6, max_row=ws2.max_row+1)
     c2.set_categories(dates)
 
-    ws2.add_chart(c2, "E18")
+    ws2.add_chart(c2, "F18")
     wb.save('SiteStatusProject.xlsx')
 
     #iterate over data-
 
 def failReason(siteName):
+    global MondayDate
     wb = load_workbook(filename='SiteStatusProject.xlsx')
     sheet1 = wb['SiteStatusProject']
     maxRow = sheet1.max_row + 1
@@ -289,7 +319,8 @@ def failReason(siteName):
 
 
 
-list = ["All sites","Haifa Bay Port" ,"FAB 28","S32 Mine","S32 Worsley alumina" ,"BHP Area C" ,"Minera Centinela","BHP San Manuel","Vale NC1"]
+list = ["All sites","Haifa Bay Port" ,"FAB 28","S32 Mine","S32 Worsley alumina" ,"BHP area C" ,"Minera Centinela","BHP San Manuel","Vale NC1"]
+
 for siteName in list:
     function(siteName)
     failReason(siteName)
