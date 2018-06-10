@@ -14,7 +14,7 @@ from openpyxl.chart import (
     ProjectedPieChart,
     Reference
 )
-print("Set the planned KPI date (Monday Date)")
+print("Set the planned KPI date (Usually Monday date)")
 year = int(input('Enter a year : '))
 month = int(input('Enter a month : '))
 day = int(input('Enter a day : '))
@@ -223,7 +223,7 @@ def failReason(siteName):
                         cancelSystem += 1
                     elif (sheet1['E' + str(row)].value == "Client related reason"):
                         cancelClient += 1
-                elif(sheet1['B' +str(row)].value=="Canceled due to PM's consideration"):
+                elif(sheet1['B' +str(row)].value=="planning related gap"):
                     cancelPM+=1
 
 
@@ -231,7 +231,7 @@ def failReason(siteName):
     print(siteName)
     print("fail- " ,fail)
     print("cancel- ",cancel)
-    print("Canceled due to PM's consideration- ",cancelPM)
+    print("planning related gap- ",cancelPM)
     print("done- ", done)
     print("\n")
 
@@ -242,7 +242,7 @@ def failReason(siteName):
         ['fail reason', 'Count'],
         ['fail', int(fail)],
         ['cancel', int(cancel)],
-        ['Canceled due to PM consideration', int(cancelPM)],
+        ['planning related gap', int(cancelPM)],
         ['success', int(done)],
     ]
 
